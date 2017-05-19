@@ -40,7 +40,7 @@
         width (width rectangle)
         height (height rectangle)]
     (and (<= x1 px (+ x1 width))
-        (<= y1 py (+ y1 height)))))
+         (<= y1 py (+ y1 height)))))
 
 
 (defn contains-rectangle? [outer inner]
@@ -105,30 +105,41 @@
   (set (map :name (authors books))))
 
 (defn author->string [author]
-  :-)
+  (let [name (:name author)
+        years (if (contains? author :birth-year)
+                (str " (" (:birth-year author) " - " (:death-year author) ")"))]
+    (str name years)))
+
 
 (defn authors->string [authors]
-  :-)
+  (apply str (interpose ", " (map author->string authors))))
 
 (defn book->string [book]
-  :-)
+  (str (:title book) ", written by " (authors->string (:authors book))))
 
 (defn books->string [books]
-  :-)
+  (if (empty? books)
+    "No books."
+    (let [count-string (if (= (count books) 1)
+                         "1 book."
+                         (str (count books) " books."))
+          book-strings (map book->string books)]
+      (str count-string " " (apply str (interpose ". " book-strings)) "."))))
+
 
 (defn books-by-author [author books]
-  :-)
+  (filter (fn [book] (has-author? book author)) books))
 
 (defn author-by-name [name authors]
-  :-)
+  (first (filter (fn [author] (= (:name author) name)) authors)))
 
 (defn living-authors [authors]
-  :-)
+  (filter alive? authors))
 
 (defn has-a-living-author? [book]
-  :-)
+  (not (empty? (living-authors (:authors book)))))
 
 (defn books-by-living-authors [books]
-  :-)
+  (filter has-a-living-author? books))
 
 ; %________%
